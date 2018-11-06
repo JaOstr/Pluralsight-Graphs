@@ -1,0 +1,36 @@
+Index: le_server.py
+===================================================================
+--- le_server.py	(revision 11435)
++++ le_server.py	(working copy)
+@@ -58,9 +58,9 @@
+         self.add_service(HeartRateService(bus, 0))
+         self.add_service(BatteryService(bus, 1))
+         self.add_service(TestService(bus, 2))
+-        self.add_service(CyclingSpeedAndCadenceService(bus, 3))
+-        self.add_service(AlertNotificationService(bus, 4))
+-        self.add_service(HealthThermometerService(bus,5))
++        #self.add_service(CyclingSpeedAndCadenceService(bus, 3))
++        #self.add_service(AlertNotificationService(bus, 4))
++        #self.add_service(HealthThermometerService(bus,5))
+ 		
+     def get_path(self):
+         return dbus.ObjectPath(self.path)
+@@ -1686,7 +1686,8 @@
+ 
+     bus = dbus.SystemBus()
+ 
+-    service_manager = dbus.Interface(bus.get_object(BLUEGO_SERVICE_NAME, "/"), GATT_MANAGER_IFACE)
++    bluego = bus.get_object(BLUEGO_SERVICE_NAME, "/")
++    service_manager = dbus.Interface(bluego, GATT_MANAGER_IFACE)
+ 
+     print(service_manager)
+     
+@@ -1697,7 +1698,7 @@
+     service_manager.RegisterApplication(app.get_path(),
+                                     reply_handler=register_app_cb,
+                                     error_handler=register_app_error_cb)
+-
++    bluego.StartAdvertising(dbus_interface='org.bluez.Adapter1')
+     try:
+         mainloop.run()
+     except KeyboardInterrupt:            
